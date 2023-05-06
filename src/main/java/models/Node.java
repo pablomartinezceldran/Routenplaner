@@ -11,12 +11,14 @@ public class Node {
     double longitude;
     int elevation;
 
+
     public Node(int nodeID, int nodeID2, double latitude, double longitude, int elevation){
         this.nodeID=nodeID;
         this.nodeID2=nodeID2;
         this.latitude=latitude;
         this.longitude=longitude;
         this.elevation=elevation;
+
     }
 
 }

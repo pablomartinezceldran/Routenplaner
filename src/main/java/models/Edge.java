@@ -7,6 +7,7 @@ public class Edge {
     int type;
     int maxspeed;
 
+
     public Edge(int scrIDX, int trgIDX, int cost, int type, int maxspeed){
         this.scrIDX=scrIDX;
         this.trgIDX=trgIDX;
