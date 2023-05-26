@@ -49,3 +49,50 @@ public class MapGraph {
 
 
 }
+
+/* I would implement it like this:
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class RoutePlanner {
+    private int[][] graph;
+    public RoutePlanner(int[][] graph) {
+        this.graph = graph;
+    }
+
+    //dijkstra algorithm
+    public int[] dijkstra(int startNode, int endNode) {
+        int[] distances = new int[graph.length];
+        boolean[] visited = new boolean[graph.length];
+        PriorityQueue<Node> queue = new PriorityQueue<>();
+
+        Arrays.fill(distances, Integer.MAX_VALUE);
+        distances[startNode] = 0;
+
+        queue.add(new Node(startNode, 0));
+
+        while (!queue.isEmpty()) {
+            Node currentNode = queue.poll();
+            if (visited[currentNode.node]) {
+                continue;
+            }
+            visited[currentNode.node] = true;
+
+            for (int i = 0; i < graph[currentNode.node].length; i++) {
+                if (visited[i]) {
+                    continue;
+                }
+
+                int distance = currentNode.distance + graph[currentNode.node][i];
+
+                if (distance < distances[i]) {
+                    distances[i] = distance;
+                    queue.add(new Node(i, distance));
+                }
+            }
+        }
+        return distances[endNode];
+    }
+ */
