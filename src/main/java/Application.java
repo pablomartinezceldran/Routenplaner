@@ -1,4 +1,6 @@
-import main.java.models.MapGraph1;
+package main.java;
+
+import main.java.models.MapGraph;
 
 import java.io.IOException;
 
@@ -9,7 +11,7 @@ public class Application {
         System.out.println("-----------------------------------------");
         long memoryBefore = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
-        MapGraph1 map = new MapGraph1();
+        MapGraph map = new MapGraph();
         map.fillMap();
 
         // can be deleted

@@ -4,6 +4,7 @@ out/
 !**/src/test/**/out/
 .idea
 Routenplaner.iml
+*.xml
 
 ### Eclipse ###
 .apt_generated

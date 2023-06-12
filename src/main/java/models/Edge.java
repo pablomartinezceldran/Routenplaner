@@ -1,14 +1,18 @@
 package main.java.models;
 
 public class Edge {
-    int scrIDX;
-    int trgIDX;
-    int cost;
+    private final int target;
+    private final int cost;
 
+    public Edge(int trgID, int cost){
+        this.target = trgID;
+        this.cost = cost;
+    }
 
-    public Edge(int scrIDX, int trgIDX, int cost){
-        this.scrIDX=scrIDX;
-        this.trgIDX=trgIDX;
-        this.cost=cost;
+    public int getCost() {
+        return cost;
+    }
+    public int getTarget() {
+        return target;
     }
 }
