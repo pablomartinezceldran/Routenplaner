@@ -1,31 +1,21 @@
 package main.java.models;
 
 public class Node {
+    int nodeID;
 
-    private final int nodeID;
     /*x-Achse*/
-    private final long latitude;
+    double latitude;
+
     /*y-Achse*/
-    private final long longitude;
+    double longitude;
 
 
-    public Node(int nodeID, long latitude, long longitude){
-        this.nodeID = nodeID;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public Node(int nodeID, double latitude, double longitude){
+        this.nodeID=nodeID;
+        this.latitude=latitude;
+        this.longitude=longitude;
     }
 
-    public int getNodeID() {
-        return nodeID;
-    }
-
-    public long getLatitude() {
-        return latitude;
-    }
-
-    public long getLongitude() {
-        return longitude;
-    }
 }
 /* I would implement it like this:
 

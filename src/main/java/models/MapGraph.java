@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class MapGraph {
     /*unvollständig*/
-    ArrayList<ArrayList<Double>> adjList = new ArrayList<ArrayList<Double>>();
+    //ArrayList<ArrayList<Double>> adjList = new ArrayList<ArrayList<Double>>();
     double[] OffsetMap = new double[0];
     double[][] EdgeMap = new double[0][0];
     double nodeID1Map[] = new double[0];
