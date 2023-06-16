@@ -5,43 +5,58 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-
-/*Alternative Version des Graphen
+/*
+//Alternative Version des Graphen
 public class MapGraph {
     //unvollständig
-    //ArrayList<ArrayList<Double>> adjList = new ArrayList<ArrayList<Double>>();
-    double[] OffsetMap = new double[0];
-    double[][] EdgeMap = new double[0][0];
-    double nodeID1Map[] = new double[0];
+    ArrayList<Integer> offsetMap = new ArrayList<Integer>();
 
-    public void createGraphs(String datName) {
+    ArrayList<ArrayList<Integer>> edgeMap = new ArrayList<ArrayList<Integer>>();
+    ArrayList<Integer> sourceIDMap = new ArrayList<Integer>();
+
+
+    //double[] OffsetMap = new double[0];
+    //double[][] EdgeMap = new double[0][0];
+    //double sourceIDMap[] = new double[0];
+
+    public void createGraph(String datName) {
         //File file = new File(datName);
         try {
             BufferedReader in = new BufferedReader(new FileReader(datName));
             for(int i=0;i<5;i++) in.readLine();
-            int numNodes= in.read();
-            int numEdges= in.read();
+            int numNodes= Integer.parseInt(in.readLine());
+            int numEdges= Integer.parseInt(in.readLine());
             for(int i=0;i<numNodes;i++){
                 in.readLine();
+                offsetMap.add(0);
             }
             //Fülle die Kanten liste (siehe Intro Phase I)
             for(int i=0;i<numEdges;i++) {
-                double offset = 0;
+                //double offset = 0;
                 String edge = in.readLine();
                 String[] split = edge.split(" "); // [srcIDX, trgIDX, cost, type, maxspeed]
-                double nodeID1 = Double.parseDouble(split[0]);
-                double nodeID2 = Double.parseDouble(split[0]);
-                double cost = Double.parseDouble(split[0]);
-                EdgeMap[i][0] = nodeID1;
-                EdgeMap[i][1] = nodeID2;
-                EdgeMap[i][2] = cost;
-                nodeID1Map[i] = nodeID1;
+                int nodeID1 = Integer.parseInt(split[0]);
+                int nodeID2 = Integer.parseInt(split[1]); //eigentlich [1]
+                int cost = Integer.parseInt(split[2]); //eigentlich [2]
+                edgeMap.add(new ArrayList<Integer>());
+                edgeMap.get(i).add(nodeID1);                      //edgeMap[i][0] = nodeID1;
+                edgeMap.get(i).add(nodeID2);                      //edgeMap[i][1] = nodeID2;
+                edgeMap.get(i).add(cost);                         //edgeMap[i][2] = cost;
+                sourceIDMap.add(i, nodeID1);                         //sourceIDMap[i] = nodeID1;
             }
             //Fülle die Offset liste (siehe Intro Phase I)
-            double maxID=0;
-            for(double nodeID: nodeID1Map){
-                if(nodeID>maxID) maxID++;
-                else OffsetMap[(int) maxID]+=1;
+
+            //Kanten in den fmi-Files sind aufsteigend nach SourceID geordnet
+            //sourceIDMap enthält für jede Kante dessen SourceID (auch aufsteigend)
+            //Ablauf:
+            //maxID ist die ID der Node die gerade nach ausgehenden Kanten geprüft wird
+            //für jeden Entry, für eine best. source-node, in der sourceIDMap, wird der counter für ausgehende Kanten der node um 1 erhöht,
+            //also OffsetMap[(int) maxID]+=1
+            //wenn eine Node keine weiteren ausg. Kanten hat, wird die Node mit nächsthöherer ID geprüft (maxID++)
+            int maxID=0;
+            for(int sourceID: sourceIDMap){
+                if(sourceID>maxID) maxID++;
+                else offsetMap.set(maxID, offsetMap.get(maxID)+1);   //[(int) maxID]+=1;
             }
 
         }catch(FileNotFoundException exc){
