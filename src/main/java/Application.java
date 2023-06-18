@@ -13,7 +13,7 @@ public class Application {
         long memoryBefore = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         MapGraph map = new MapGraph();
-        map.fillMap();
+        map.fillMap("resources/germany.fmi");
         //feel free to use the 3 functions below
         //map.createGraph("resources/toy.fmi");
         //map.createGraph("resources/stgtregbz.fmi");
