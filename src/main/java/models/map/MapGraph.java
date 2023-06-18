@@ -17,68 +17,73 @@ public class MapGraph {
     private Integer numNodes;
     private Integer numEdges;
 
-    public void fillMap() throws IOException {
+    public void fillMap(String graphPath) {
         // select fmi file
 //        BufferedReader in = new BufferedReader(new FileReader("resources/toy.fmi"));
 //        BufferedReader in = new BufferedReader(new FileReader("resources/stgtregbz.fmi"));
-        BufferedReader in = new BufferedReader(new FileReader("resources/germany.fmi"));
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(graphPath));
 
-        // read first 4 metadata information and blank line
-        for (int i = 0; i < 5; ++i) {
-            in.readLine();
+            // read first 4 metadata information and blank line
+            for (int i = 0; i < 5; ++i) {
+                in.readLine();
+            }
+            // read number of nodes and edges of the graph
+            numNodes = Integer.parseInt(in.readLine());
+            numEdges = Integer.parseInt(in.readLine());
+
+            // check time to read nodes and edges. can be deleted
+//            long nodesReadTime = System.currentTimeMillis();
+
+            //read nodes information. Variables are declared outside the loop to reduce memory usage
+            String[] values;
+            int nodeId;
+            Node node;
+            for (int i = 0; i < numNodes; ++i) {
+                adjList.add(new ArrayList<>());
+                values = in.readLine().split(" ");
+                nodeId = Integer.parseInt(values[0]);
+
+                node = new Node(
+                        nodeId,
+                        Long.parseLong(values[2].replace(".","")),
+                        Long.parseLong(values[3].replace(".",""))
+                );
+                // add node to nodeList
+                nodeList.add(node);
+
+                // add node to KDTree. it is more efficient to create it this way instead of creating it after,
+                // but for the benchmark we need to create it after. Maybe we can change it fot next phase
+//                nodeTree.addNode(node);
+            }
+
+            // check time to read nodes and edges. can be deleted
+//            long edgesReadTime = System.currentTimeMillis();
+
+            // read edges information. Variables are declared outside the loop to reduce memory usage
+            int src;
+            int trg;
+            int cost;
+            Edge edge;
+            for (int i = 0; i < numEdges; ++i) {
+                values = in.readLine().split(" ");
+                src = Integer.parseInt(values[0]);
+                trg = Integer.parseInt(values[1]);
+                cost = Integer.parseInt(values[2]);
+                edge = new Edge(trg, cost);
+                adjList.get(src).add(edge);
+            }
+            in.close();
+
+            // check time to read nodes and edges. can be deleted
+//            long endTime = System.currentTimeMillis();
+//            long nodesTime = edgesReadTime - nodesReadTime;
+//            long edgesTime = endTime - edgesReadTime;
+//            System.out.println("Nodes time: " + nodesTime + " miliseconds");
+//            System.out.println("Edges time: " + edgesTime + " miliseconds");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        // read number of nodes and edges of the graph
-        numNodes = Integer.parseInt(in.readLine());
-        numEdges = Integer.parseInt(in.readLine());
-
-        // check time to read nodes and edges. can be deleted
-        long nodesReadTime = System.currentTimeMillis();
-
-        //read nodes information. Variables are declared outside the loop to reduce memory usage
-        String[] values;
-        int nodeId;
-        Node node;
-        for (int i = 0; i < numNodes; ++i) {
-            adjList.add(new ArrayList<>());
-            values = in.readLine().split(" ");
-            nodeId = Integer.parseInt(values[0]);
-
-            node = new Node(
-                    nodeId,
-                    Long.parseLong(values[2].replace(".","")),
-                    Long.parseLong(values[3].replace(".",""))
-            );
-            // add node to nodeList
-            nodeList.add(node);
-
-            // add node to KDTree
-            nodeTree.addNode(node);
-        }
-
-        // check time to read nodes and edges. can be deleted
-        long edgesReadTime = System.currentTimeMillis();
-
-        // read edges information. Variables are declared outside the loop to reduce memory usage
-        int src;
-        int trg;
-        int cost;
-        Edge edge;
-        for (int i = 0; i < numEdges; ++i) {
-            values = in.readLine().split(" ");
-            src = Integer.parseInt(values[0]);
-            trg = Integer.parseInt(values[1]);
-            cost = Integer.parseInt(values[2]);
-            edge = new Edge(trg, cost);
-            adjList.get(src).add(edge);
-        }
-        in.close();
-
-        // check time to read nodes and edges. can be deleted
-        long endTime = System.currentTimeMillis();
-        long nodesTime = edgesReadTime - nodesReadTime;
-        long edgesTime = endTime - edgesReadTime;
-        System.out.println("Nodes time: " + nodesTime + " miliseconds");
-        System.out.println("Edges time: " + edgesTime + " miliseconds");
     }
 
     // prints node list. do not use with big maps, too many prints
