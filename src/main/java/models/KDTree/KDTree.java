@@ -122,4 +122,38 @@ public class KDTree {
         KDNode nearestNode = findNearestNode(root, new Node(0, latitude, longitude), root, 0);
         return nearestNode.node;
     }
+
+    public double[] findNearestNode(double latitude, double longitude) {
+        long lat = Long.parseLong(String.valueOf(latitude).replace(".",""));
+        long lon = Long.parseLong(String.valueOf(longitude).replace(".",""));
+        lat = checkLatitude(lat);
+        lon = checkLongitude(lon);
+        System.out.println("Lat: " + lat + " Long: " + lon);
+        KDNode nearestNode = findNearestNode(root, new Node(0, lat, lon), root, 0);
+        return new double[]{nearestNode.node.getLatitude(), nearestNode.node.getLongitude()};
+    }
+
+    private long checkLongitude(long number) {
+        String numberString = Long.toString(number);
+        int digitCount = numberString.length();
+        int zerosToAdd = (numberString.startsWith("1")) ? 19 - digitCount : 18 - digitCount;
+
+        if (zerosToAdd > 0) {
+            for (int i = 0; i < zerosToAdd; i++) {
+                number *= 10;
+            }
+        }
+        return number;
+    }
+
+    private long checkLatitude(long number) {
+        int digitCount = (int) Math.log10(Math.abs(number)) + 1;
+        int zerosToAdd = 19 - digitCount;
+        if (zerosToAdd > 0) {
+            for (int i = 0; i < zerosToAdd; i++) {
+                number *= 10;
+            }
+        }
+        return number;
+    }
 }
