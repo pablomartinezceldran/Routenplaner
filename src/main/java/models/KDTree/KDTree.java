@@ -128,7 +128,6 @@ public class KDTree {
         long lon = Long.parseLong(String.valueOf(longitude).replace(".",""));
         lat = checkLatitude(lat);
         lon = checkLongitude(lon);
-        System.out.println("Lat: " + lat + " Long: " + lon);
         KDNode nearestNode = findNearestNode(root, new Node(0, lat, lon), root, 0);
         return new double[]{nearestNode.node.getLatitude(), nearestNode.node.getLongitude()};
     }
