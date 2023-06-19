@@ -2,12 +2,13 @@ package main.java.models.KDTree;
 
 import main.java.models.map.Node;
 
-public class KDNode {
+// represents a node of the K2Tree
+public class K2Node {
     Node node;
-    KDNode left;
-    KDNode right;
+    K2Node left;
+    K2Node right;
 
-    public KDNode(Node node) {
+    public K2Node(Node node) {
         this.node = node;
         this.left = null;
         this.right = null;
