@@ -3,8 +3,6 @@ package main.java;
 import main.java.models.map.MapGraph;
 import main.java.services.Dijkstra;
 
-import java.io.IOException;
-
 public class Testing {
     public static void main(String[] args) {
 
