@@ -1,6 +1,6 @@
 package main.java;
 
-import main.java.models.K2Tree.K2Tree;
+import main.java.models.k2Tree.K2Tree;
 import main.java.models.map.MapGraph;
 import main.java.services.Dijkstra;
 

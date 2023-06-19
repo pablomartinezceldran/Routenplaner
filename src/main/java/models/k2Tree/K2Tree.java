@@ -1,4 +1,4 @@
-package main.java.models.K2Tree;
+package main.java.models.k2Tree;
 
 import main.java.models.map.Node;
 
