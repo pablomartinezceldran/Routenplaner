@@ -32,7 +32,7 @@ public class Benchmark {
 		System.out.println("Setting up closest node data structure...");
 
 		// TODO: set up closest node data structure here
-		K2Tree k2Tree = new K2Tree(map.getNodeList());
+		K2Tree k2Tree = new K2Tree(map.getNodesProperties());
 
 		System.out.println("Finding closest node to coordinates " + lon + " " + lat);
 		long nodeFindStart = System.currentTimeMillis();
