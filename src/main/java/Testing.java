@@ -1,5 +1,6 @@
 package main.java;
 
+import main.java.models.k2Tree.K2Tree;
 import main.java.models.map.MapGraph;
 import main.java.services.Dijkstra;
 
@@ -15,17 +16,21 @@ public class Testing {
         System.out.println("Map read!");
         System.out.println("-----------------------------------------");
 
-        System.out.println("Dijkstra one to all:");
-        long dijkstra1 = System.currentTimeMillis();
-        Dijkstra.oneToAll(map, 16743660);
-        long dijkstra2 = System.currentTimeMillis();
-        System.out.println("Time one to all: " + (dijkstra2 - dijkstra1) + " ms");
+        K2Tree k2Tree = new K2Tree(map.getNodesProperties());
+        double[] coords = k2Tree.findNearestNode(48.82329940000000335, 9.10508399999999973);
+        System.out.println(coords[0] + ", " + coords[1]);
 
-        System.out.println("Dijkstra one to one:");
-        dijkstra1 = System.currentTimeMillis();
-        System.out.println("One to one: " + Dijkstra.oneToOne(map, 8371834, 16743660));
-        dijkstra2 = System.currentTimeMillis();
-        System.out.println("Time one to one: " + (dijkstra2 - dijkstra1) + " ms");
+//        System.out.println("Dijkstra one to all:");
+//        long dijkstra1 = System.currentTimeMillis();
+//        Dijkstra.oneToAll(map, 16743660);
+//        long dijkstra2 = System.currentTimeMillis();
+//        System.out.println("Time one to all: " + (dijkstra2 - dijkstra1) + " ms");
+//
+//        System.out.println("Dijkstra one to one:");
+//        dijkstra1 = System.currentTimeMillis();
+//        System.out.println("One to one: " + Dijkstra.oneToOne(map, 8371834, 16743660));
+//        dijkstra2 = System.currentTimeMillis();
+//        System.out.println("Time one to one: " + (dijkstra2 - dijkstra1) + " ms");
 
 
 //        double[][] nodes = map.getNodeList();
