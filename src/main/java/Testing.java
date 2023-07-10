@@ -17,7 +17,8 @@ public class Testing {
         System.out.println("-----------------------------------------");
 
         K2Tree k2Tree = new K2Tree(map.getNodesProperties());
-        double[] coords = k2Tree.findNearestNode(48.82329940000000335, 9.10508399999999973);
+        System.out.println("k2tree build success");
+        double[] coords = k2Tree.findNearestNode(48.82629400000000430, 9.07952840000000094);
         System.out.println(coords[0] + ", " + coords[1]);
 
 //        System.out.println("Dijkstra one to all:");
