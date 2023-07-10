@@ -54,14 +54,13 @@ public class K2Tree {
         int axis = depth % 2;
 
         // sort nodes based on current axis (0 lon, 1 lat)
-        Arrays.sort(nodes, Comparator.comparingDouble(node -> {
-            if (axis == 0 && node.length >= 3) {
-                return node[2]; // Longitude
-            } else if (axis == 1 && node.length >= 3) {
-                return node[3]; // Latitude
+        Arrays.sort(nodes, (node1, node2) -> {
+            if (axis == 0) {
+                return Double.compare(node1[1], node2[1]);
+            } else {
+                return Double.compare(node1[0], node2[0]);
             }
-            return 0.0;
-        }));
+        });
 
         // find median node in sorted nodes (optimum point for balancing the tree)
         int median = nodes.length / 2;
