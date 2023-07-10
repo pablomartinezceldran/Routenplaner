@@ -1,8 +1,7 @@
 package main.java.models.k2Tree;
 
-import main.java.models.map.Node;
-
-import java.util.List;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class K2Tree {
     public K2Node root;
@@ -14,11 +13,11 @@ public class K2Tree {
         this.root = null;
     }
 
-    public void addNode(Node node) {
+    public void addNode(double[] node) {
         this.root = addNodeRecursive(this.root, node, 0);
     }
 
-    private K2Node addNodeRecursive(K2Node currentNode, Node newNode, int depth) {
+    private K2Node addNodeRecursive(K2Node currentNode, double[] newNode, int depth) {
         if (currentNode == null) {
             return new K2Node(newNode);
         }
@@ -26,13 +25,13 @@ public class K2Tree {
         int axis = depth % 2;
 
         if (axis == 0) {
-            if (newNode.getLongitude() < currentNode.node.getLongitude()) {
+            if (newNode[1] < currentNode.node[1]) {
                 currentNode.left = addNodeRecursive(currentNode.left, newNode, depth + 1);
             } else {
                 currentNode.right = addNodeRecursive(currentNode.right, newNode, depth + 1);
             }
         } else {
-            if (newNode.getLatitude() < currentNode.node.getLatitude()) {
+            if (newNode[0] < currentNode.node[0]) {
                 currentNode.left = addNodeRecursive(currentNode.left, newNode, depth + 1);
             } else {
                 currentNode.right = addNodeRecursive(currentNode.right, newNode, depth + 1);
@@ -43,49 +42,50 @@ public class K2Tree {
     }
     // --------------------------------------------------------
 
-    public K2Tree(List<Node> nodes) {
+    public K2Tree(double[][] nodes) {
         this.root = buildKDTree(nodes, 0);
     }
 
-    private K2Node buildKDTree(List<Node> nodes, int depth) {
+    private K2Node buildKDTree(double[][] nodes, int depth) {
         // base case: no nodes
-        if (nodes.isEmpty()) return null;
+        if (nodes.length == 0) return null;
 
         // axis is based on current depth (two dimensions lat & lon)
         int axis = depth % 2;
 
         // sort nodes based on current axis (0 lon, 1 lat)
-        nodes.sort((node1, node2) -> {
-            if (axis == 0) {
-                return Double.compare(node1.getLongitude(), node2.getLongitude());
-            } else {
-                return Double.compare(node1.getLatitude(), node2.getLatitude());
+        Arrays.sort(nodes, Comparator.comparingDouble(node -> {
+            if (axis == 0 && node.length >= 3) {
+                return node[2]; // Longitude
+            } else if (axis == 1 && node.length >= 3) {
+                return node[3]; // Latitude
             }
-        });
+            return 0.0;
+        }));
 
         // find median node in sorted nodes (optimum point for balancing the tree)
-        int median = nodes.size() / 2;
-        Node medianNode = nodes.get(median);
+        int median = nodes.length / 2;
+        double[] medianNode = nodes[median];
 
         // recursively build subtrees
         // left smaller ones and right bigger ones based on the axis
         // we increase depth to change sorting criteria
         K2Node node = new K2Node(medianNode);
-        node.left = buildKDTree(nodes.subList(0, median), depth + 1);
-        node.right = buildKDTree(nodes.subList(median + 1, nodes.size()), depth + 1);
+        node.left = buildKDTree(Arrays.copyOfRange(nodes, 0, median), depth + 1);
+        node.right = buildKDTree(Arrays.copyOfRange(nodes, median + 1, nodes.length), depth + 1);
 
         return node;
     }
 
     // calculates Euclidean distance between the nodes
-    private double calculateDistance(Node node1, Node node2) {
-        double dx = node1.getLongitude() - node2.getLongitude();
-        double dy = node1.getLatitude() - node2.getLatitude();
+    private double calculateDistance(double[] node1, double[] node2) {
+        double dx = node1[1] - node2[1];
+        double dy = node1[0] - node2[0];
         return Math.sqrt(dx * dx + dy * dy);
     }
 
     // recursively finds the nearest node to the target node
-    private K2Node findNearestNodeRec(K2Node currentNode, Node target, K2Node bestNode, int depth) {
+    private K2Node findNearestNodeRec(K2Node currentNode, double[] target, K2Node bestNode, int depth) {
         // base case: current node is null, return best node found so far
         if (currentNode == null) {
             return bestNode;
@@ -102,12 +102,12 @@ public class K2Tree {
         // recursively explore subtrees based on the axis (0 lon, 1 lat)
         if (axis == 0) {
             // splitting along longitude
-            if (target.getLongitude() < currentNode.node.getLongitude()) {
+            if (target[1] < currentNode.node[1]) {
                 // target on the left side of current node, explore left subtree first
                 bestNode = findNearestNodeRec(currentNode.left, target, bestNode, depth + 1);
 
                 // check if there is a potential better node on right subtree, explore it as well
-                if (target.getLongitude() + bestNodeDistance >= currentNode.node.getLongitude()) {
+                if (target[1] + bestNodeDistance >= currentNode.node[1]) {
                     bestNode = findNearestNodeRec(currentNode.right, target, bestNode, depth + 1);
                 }
             } else {
@@ -115,18 +115,18 @@ public class K2Tree {
                 bestNode = findNearestNodeRec(currentNode.right, target, bestNode, depth + 1);
 
                 // check if there is a potential better node on left subtree, explore it as well
-                if (target.getLongitude() - bestNodeDistance <= currentNode.node.getLongitude()) {
+                if (target[1] - bestNodeDistance <= currentNode.node[1]) {
                     bestNode = findNearestNodeRec(currentNode.left, target, bestNode, depth + 1);
                 }
             }
         } else {
             // splitting along latitude
-            if (target.getLatitude() < currentNode.node.getLatitude()) {
+            if (target[0] < currentNode.node[0]) {
                 // target below the current node, explore the left subtree first
                 bestNode = findNearestNodeRec(currentNode.left, target, bestNode, depth + 1);
 
                 // check if there is a potential better node on the right subtree, explore it as well
-                if (target.getLatitude() + bestNodeDistance >= currentNode.node.getLatitude()) {
+                if (target[0] + bestNodeDistance >= currentNode.node[0]) {
                     bestNode = findNearestNodeRec(currentNode.right, target, bestNode, depth + 1);
                 }
             } else {
@@ -134,7 +134,7 @@ public class K2Tree {
                 bestNode = findNearestNodeRec(currentNode.right, target, bestNode, depth + 1);
 
                 // check if there is a potential better bode on the left subtree, explore it as well
-                if (target.getLatitude() - bestNodeDistance <= currentNode.node.getLatitude()) {
+                if (target[0] - bestNodeDistance <= currentNode.node[0]) {
                     bestNode = findNearestNodeRec(currentNode.left, target, bestNode, depth + 1);
                 }
             }
@@ -150,8 +150,8 @@ public class K2Tree {
         long lon = Long.parseLong(String.valueOf(longitude).replace(".",""));
         lat = checkLatitude(lat);
         lon = checkLongitude(lon);
-        K2Node nearestNode = findNearestNodeRec(root, new Node(-1, lat, lon), root, 0);
-        return new double[]{nearestNode.node.getLatitude(), nearestNode.node.getLongitude()};
+        K2Node nearestNode = findNearestNodeRec(root, new double[]{lat, lon}, root, 0);
+        return new double[]{nearestNode.node[0], nearestNode.node[1]};
     }
 
     // as we use long type to save longitude, we have to ensure it has the same digits

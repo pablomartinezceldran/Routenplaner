@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class MapGraph {
 
-    private final ArrayList<ArrayList<Edge>> adjList = new ArrayList<>();
-    private final ArrayList<Node> nodeList = new ArrayList<>();
+    private final ArrayList<ArrayList<int[]>> adjList = new ArrayList<>();
+    private double[][] nodesProperties;
 
     private Integer numNodes;
     private Integer numEdges;
@@ -25,24 +25,18 @@ public class MapGraph {
             numNodes = Integer.parseInt(in.readLine());
             numEdges = Integer.parseInt(in.readLine());
 
+            nodesProperties = new double[numNodes][2];
+
             //read nodes information
             String[] values;
             int nodeId;
-            Node node;
             for (int i = 0; i < numNodes; ++i) {
                 adjList.add(new ArrayList<>());
                 values = in.readLine().split(" ");
                 nodeId = Integer.parseInt(values[0]);
 
-                // in order to store latitude and longitude without losing information
-                // and consuming as little memory as possible, we have opted for a long
-                node = new Node(
-                        nodeId,
-                        Long.parseLong(values[2].replace(".","")),
-                        Long.parseLong(values[3].replace(".",""))
-                );
-                // add node to nodeList
-                nodeList.add(node);
+                nodesProperties[nodeId][0] = Double.parseDouble(values[2]);
+                nodesProperties[nodeId][1] = Double.parseDouble(values[3]);
 
                 // add node to KDTree. it is more efficient to create it this way instead of creating it after,
                 // but for the benchmark we need to create it after. Maybe we can change it fot next phase
@@ -53,14 +47,17 @@ public class MapGraph {
             int src;
             int trg;
             int cost;
-            Edge edge;
             for (int i = 0; i < numEdges; ++i) {
                 values = in.readLine().split(" ");
                 src = Integer.parseInt(values[0]);
                 trg = Integer.parseInt(values[1]);
                 cost = Integer.parseInt(values[2]);
-                edge = new Edge(trg, cost);
-                adjList.get(src).add(edge);
+
+                int[] edgeProperties = new int[2];
+                edgeProperties[0] = trg;
+                edgeProperties[1] = cost;
+
+                adjList.get(src).add(edgeProperties);
             }
             in.close();
         } catch (IOException e) {
@@ -73,11 +70,11 @@ public class MapGraph {
     }
 
     //returns the edges of a node
-    public ArrayList<Edge> getAdjacentEdges(int node) {
+    public ArrayList<int[]> getAdjacentEdges(int node) {
         return adjList.get(node);
     }
 
-    public ArrayList<Node> getNodeList() {
-        return nodeList;
+    public double[][] getNodesProperties() {
+        return nodesProperties;
     }
 }
