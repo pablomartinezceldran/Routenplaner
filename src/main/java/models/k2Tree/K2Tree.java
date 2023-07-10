@@ -144,40 +144,8 @@ public class K2Tree {
     }
 
     // returns an array with the coordinates of the nearest node of a given longitude and latitude.
-    // NOTE: double loses information and with exponential notation.
     public double[] findNearestNode(double latitude, double longitude) {
-        long lat = Long.parseLong(String.valueOf(latitude).replace(".",""));
-        long lon = Long.parseLong(String.valueOf(longitude).replace(".",""));
-        lat = checkLatitude(lat);
-        lon = checkLongitude(lon);
-        K2Node nearestNode = findNearestNodeRec(root, new double[]{lat, lon}, root, 0);
+        K2Node nearestNode = findNearestNodeRec(root, new double[]{latitude, longitude}, root, 0);
         return new double[]{nearestNode.node[0], nearestNode.node[1]};
-    }
-
-    // as we use long type to save longitude, we have to ensure it has the same digits
-    private long checkLongitude(long number) {
-        String numberString = Long.toString(number);
-        int digitCount = numberString.length();
-        // there are longitude numbers with 18 and 19 digits
-        int zerosToAdd = (numberString.startsWith("1")) ? 19 - digitCount : 18 - digitCount;
-
-        if (zerosToAdd > 0) {
-            for (int i = 0; i < zerosToAdd; i++) {
-                number *= 10;
-            }
-        }
-        return number;
-    }
-
-    // as we use long type to save latitude, we have to ensure it has the same digits
-    private long checkLatitude(long number) {
-        int digitCount = (int) Math.log10(Math.abs(number)) + 1;
-        int zerosToAdd = 19 - digitCount;
-        if (zerosToAdd > 0) {
-            for (int i = 0; i < zerosToAdd; i++) {
-                number *= 10;
-            }
-        }
-        return number;
     }
 }
