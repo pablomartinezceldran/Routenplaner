@@ -7,8 +7,7 @@ import main.java.models.k2Tree.K2Tree;
 import main.java.models.map.MapGraph;
 import main.java.services.Dijkstra;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +41,9 @@ public class Server {
     private static void initServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
 
+        HttpContext menuContext = server.createContext("/");
+        menuContext.setHandler(Server::menuHandler);
+
         HttpContext closestNodeContext = server.createContext("/closestNode");
         closestNodeContext.setHandler(Server::closestNodeRequestHandler);
 
@@ -51,6 +53,19 @@ public class Server {
         server.start();
     }
 
+    static private void menuHandler(HttpExchange httpExchange) throws IOException
+    {
+        File indexFile = new File("resources/Index.html");
+        byte [] indexFileByteArray = new byte[(int)indexFile.length()];
+
+        BufferedInputStream requestStream = new BufferedInputStream(new FileInputStream(indexFile));
+        requestStream.read(indexFileByteArray, 0, indexFileByteArray.length);
+
+        httpExchange.sendResponseHeaders(200, indexFile.length());
+        OutputStream os = httpExchange.getResponseBody();
+        os.write(indexFileByteArray, 0, indexFileByteArray.length);
+        os.close();
+    }
     private static void closestNodeRequestHandler(HttpExchange exchange) throws IOException {
         Map<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
 
