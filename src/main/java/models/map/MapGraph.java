@@ -1,5 +1,7 @@
 package main.java.models.map;
 
+import main.java.models.k2Tree.K2Tree;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,6 +11,7 @@ public class MapGraph {
 
     private final ArrayList<ArrayList<int[]>> adjList = new ArrayList<>();
     private double[][] nodesProperties;
+    private final K2Tree nodeTree = new K2Tree();
 
     private Integer numNodes;
     private Integer numEdges;
@@ -25,7 +28,7 @@ public class MapGraph {
             numNodes = Integer.parseInt(in.readLine());
             numEdges = Integer.parseInt(in.readLine());
 
-            nodesProperties = new double[numNodes][2];
+            nodesProperties = new double[numNodes][3];
 
             //read nodes information
             String[] values;
@@ -37,10 +40,11 @@ public class MapGraph {
 
                 nodesProperties[nodeId][0] = Double.parseDouble(values[2]);
                 nodesProperties[nodeId][1] = Double.parseDouble(values[3]);
+                nodesProperties[nodeId][2] = Double.parseDouble(values[0]);
 
                 // add node to KDTree. it is more efficient to create it this way instead of creating it after,
                 // but for the benchmark we need to create it after. Maybe we can change it fot next phase
-//              nodeTree.addNode(node);
+              nodeTree.addNode(new double[]{Double.parseDouble(values[2]), Double.parseDouble(values[3]), Double.parseDouble(values[0])});
             }
 
             // read edges information
@@ -76,5 +80,13 @@ public class MapGraph {
 
     public double[][] getNodesProperties() {
         return nodesProperties;
+    }
+
+    public double[] getNodeProperties(int id) {
+        return nodesProperties[id];
+    }
+
+    public K2Tree getNodeTree() {
+        return nodeTree;
     }
 }
