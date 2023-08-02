@@ -9,17 +9,37 @@ import java.util.Arrays;
 public class Testing {
     public static void main(String[] args) {
 
-        System.out.println("-----------------------------------------");
         System.out.println("Reading map...");
         MapGraph map = new MapGraph();
         map.fillMap("resources/germany.fmi");
         System.out.println("Map read!");
-        System.out.println("-----------------------------------------");
 
-        K2Tree k2Tree = new K2Tree(map.getNodesProperties());
-        System.out.println("k2tree build success");
-        double[] coords = k2Tree.findNearestNode(48.82629400000000430, 9.07952840000000094);
-        System.out.println(coords[0] + ", " + coords[1]);
+        double[][] result = Dijkstra.oneToOneNew(map, 15105083, 12241570);
+
+        for (double[] doubles : result) { // Recorre las filas
+            for (double elemento : doubles) { // Recorre las columnas
+                System.out.print(elemento + " ");
+            }
+            System.out.println(); // Nueva línea para separar las filas
+        }
+
+        System.out.println("Creating K2Tree...");
+        System.out.println("k2tree build success!");
+        double[] coords1 = map.getNodeTree().findNearestNode(9.098, 48.746);
+        double[] coords2 = map.getNodeTree().findNearestNode(48.746, 9.098);
+        System.out.println("Input: lat: 9.098 & long: 48.746. Result: " + coords1[0] + ", " + coords1[1] + ". Node ID: " + coords1[2]);
+        System.out.println("Input: lat: 48.746 & long: 9.098. Result: " + coords2[0] + ", " + coords2[1] + ". Node ID: " + coords2[2]);
+
+        result = Dijkstra.oneToOneNew(map, 15105083, 12241570);
+
+        for (double[] doubles : result) { // Recorre las filas
+            for (double elemento : doubles) { // Recorre las columnas
+                System.out.print(elemento + " ");
+            }
+            System.out.println(); // Nueva línea para separar las filas
+        }
+
+
 
 //        System.out.println("Dijkstra one to all:");
 //        long dijkstra1 = System.currentTimeMillis();
