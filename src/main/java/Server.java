@@ -1,7 +1,7 @@
 package main.java;
 
-import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import main.java.models.k2Tree.K2Tree;
 import main.java.models.map.MapGraph;
@@ -23,77 +23,75 @@ public class Server {
     }
 
     private static void initMap() {
-        System.out.println("Reading map...");
+        System.out.println("Reading map and creating K2Tree...");
         long readingTimeStart = System.currentTimeMillis();
         map = new MapGraph();
         map.fillMap("resources/germany.fmi");
+        k2Tree = map.getNodeTree();
         long readingTimeEnd = System.currentTimeMillis();
-        System.out.println("Map read! Time: " + (readingTimeEnd - readingTimeStart) + " ms.");
-        System.out.println("-----------------------------------------");
-
-        System.out.println("Creating K2Tree...");
-        long treeCreationStart = System.currentTimeMillis();
-        k2Tree = new K2Tree(map.getNodesProperties());
-        long treeCreationEnd = System.currentTimeMillis();
-        System.out.println("k2tree build success. Time: " + (treeCreationEnd - treeCreationStart) + " ms.");
+        System.out.println("Done! Time: " + (readingTimeEnd - readingTimeStart) + " ms.");
     }
 
     private static void initServer() throws IOException {
+        System.out.println("Starting server...");
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
 
-        HttpContext menuContext = server.createContext("/");
-        menuContext.setHandler(Server::menuHandler);
-
-        HttpContext closestNodeContext = server.createContext("/closestNode");
-        closestNodeContext.setHandler(Server::closestNodeRequestHandler);
-
-        HttpContext routeCalculationContext = server.createContext("/routeCalculation");
-        routeCalculationContext.setHandler(Server::routeCalculationRequestHandler);
+        server.createContext("/closestNode", new ClosestNodeHandler());
+        server.createContext("/routeCalculation", new RouteCalculationHandler());
 
         server.start();
+        System.out.println("Server started on port: 8080");
     }
 
-    static private void menuHandler(HttpExchange httpExchange) throws IOException
-    {
-        File indexFile = new File("resources/Index.html");
-        byte [] indexFileByteArray = new byte[(int)indexFile.length()];
+    static class ClosestNodeHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            Map<String, String> query = queryToMap(httpExchange.getRequestURI().getQuery());
 
-        BufferedInputStream requestStream = new BufferedInputStream(new FileInputStream(indexFile));
-        requestStream.read(indexFileByteArray, 0, indexFileByteArray.length);
+            double latitude = Double.parseDouble(query.get("lat"));
+            double longitude = Double.parseDouble(query.get("lon"));
 
-        httpExchange.sendResponseHeaders(200, indexFile.length());
-        OutputStream os = httpExchange.getResponseBody();
-        os.write(indexFileByteArray, 0, indexFileByteArray.length);
-        os.close();
-    }
-    private static void closestNodeRequestHandler(HttpExchange exchange) throws IOException {
-        Map<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
+            double[] data = k2Tree.findNearestNode(latitude, longitude);
+            String response = "{\"latitude\": " + data[0] + ", \"longitude\": " + data[1] + ", \"id\": " + data[2] + "}";
 
-        double latitude = Double.parseDouble(query.get("lat"));
-        double longitude = Double.parseDouble(query.get("lon"));
+            httpExchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            httpExchange.getResponseHeaders().set("Content-Type", "application/json");
+            httpExchange.sendResponseHeaders(200, response.getBytes().length);
 
-        double[] coords = k2Tree.findNearestNode(latitude, longitude);
-
-        String response = "Input: lat: " + latitude + " & long: " + longitude + ". Result: " + coords[0] + ", " + coords[1];
-        exchange.sendResponseHeaders(200, response.getBytes().length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
     }
 
-    private static void routeCalculationRequestHandler(HttpExchange exchange) throws IOException {
-        Map<String, String> query = queryToMap(exchange.getRequestURI().getQuery());
+    static class RouteCalculationHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange httpExchange) throws IOException {
+            Map<String, String> query = queryToMap(httpExchange.getRequestURI().getQuery());
 
-        int start = Integer.parseInt(query.get("start"));
-        int end = Integer.parseInt(query.get("end"));
+            int start = Integer.parseInt(query.get("start"));
+            int end = Integer.parseInt(query.get("end"));
 
-        int result = Dijkstra.oneToOne(map, start, end);
+            double[][] result = Dijkstra.oneToOneNew(map, start, end);
 
-        String response = "Result: " + result;
-        exchange.sendResponseHeaders(200, response.getBytes().length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
+            StringBuilder response = new StringBuilder("[");
+            assert result != null;
+            for(double[] coordinate : result) {
+                response.append("{ \"latitude\": ").append(coordinate[0]).append(", \"longitude\": ").append(coordinate[1]).append(" }, ");
+            }
+            if (result.length > 0) {
+                response = new StringBuilder(response.substring(0, response.length() - 2));
+            }
+            response.append("]");
+
+            httpExchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            httpExchange.getResponseHeaders().set("Content-Type", "application/json");
+            httpExchange.sendResponseHeaders(200, response.toString().getBytes().length);
+
+            OutputStream os = httpExchange.getResponseBody();
+            os.write(response.toString().getBytes());
+            os.close();
+        }
     }
 
     private static Map<String, String> queryToMap(String query) {
