@@ -1,0 +1,120 @@
+<html>
+<head>
+    <title>Leaflet</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <style>
+        body {
+            margin: 50;
+        }
+        #map {
+            height: 80%;
+        }
+        #inputs {
+            margin-top: 20px;
+        }
+        .input {
+            width: 100px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<div id="inputs">
+    <div>
+        <span>Coordinates:</span>
+        <div >
+            <span>Start: </span>
+            <input type="text" class="input" id="startLat" placeholder="latitude"></input>
+            <input type="text" class="input" id="startLon" placeholder="longitude"></input>
+            <div id="startId"></div>
+            <button onclick="setStart()">Set</button>
+        </div>
+        <div >
+            <span>End:   </span>
+            <input type="text" class="input" id="endLat" placeholder="latitude"></input>
+            <input type="text" class="input" id="endLon" placeholder="longitude"></input>
+            <div id="endId"></div>
+            <button onclick="setEnd()">Set</button>
+        </div>
+        <button onclick="getRoute()">Query</button>
+    </div>
+</div>
+</body>
+
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([48.74521004726596, 9.106687009334566], 17);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    var startMarker = null;
+    var endMarker = null;
+    var polyline = null;
+
+    map.on('click', setMarker)
+
+    function setMarker(e) {
+        var lat = e.latlng.lat;
+        var lon = e.latlng.lng;
+        var url = "http://localhost:8080/closestNode?lat=" + lat + "&lon=" + lon;
+
+        if (startMarker == null) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    startMarker = L.marker([data.latitude, data.longitude]).addTo(map);
+                    document.getElementById("startLat").value = data.latitude;
+                    document.getElementById("startLon").value = data.longitude;
+                    document.getElementById("startId").innerHTML = data.id;
+                }
+            );
+            
+        } else if (endMarker == null) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    endMarker = L.marker([data.latitude, data.longitude]).addTo(map);
+                    document.getElementById("endLat").value = data.latitude;
+                    document.getElementById("endLon").value = data.longitude;
+                    document.getElementById("endId").innerHTML = data.id;
+                }
+            );
+        } else {
+            map.removeLayer(startMarker);
+            map.removeLayer(endMarker);
+            if (polyline != null) map.removeLayer(polyline);
+            startMarker = null;
+            endMarker = null;
+            polyline = null;
+            document.getElementById("startLat").value = "";
+            document.getElementById("startLon").value = "";
+            document.getElementById("endLat").value = "";
+            document.getElementById("endLon").value = "";
+            document.getElementById("startId").innerHTML = "";
+            document.getElementById("endId").innerHTML = "";
+        }
+    }
+
+    function getRoute() {
+        var start = document.getElementById("startId").innerHTML;
+        var end = document.getElementById("endId").innerHTML;
+
+        var url = "http://localhost:8080/routeCalculation?start=" + start +  "&end=" + end;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                var lineCoordinates = [];
+                data.forEach(element => {
+                    lineCoordinates.push([element.latitude, element.longitude]);
+                });
+                // only one polyline at a time
+                if (polyline != null) map.removeLayer(polyline);
+                polyline = L.polyline(lineCoordinates, {color: 'red'}).addTo(map);
+            });
+    }
+</script>
+</html>
