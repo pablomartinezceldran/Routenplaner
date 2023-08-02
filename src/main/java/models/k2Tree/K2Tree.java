@@ -145,6 +145,6 @@ public class K2Tree {
     // returns an array with the coordinates of the nearest node of a given longitude and latitude.
     public double[] findNearestNode(double latitude, double longitude) {
         K2Node nearestNode = findNearestNodeRec(root, new double[]{latitude, longitude}, root, 0);
-        return new double[]{nearestNode.node[0], nearestNode.node[1]};
+        return new double[]{nearestNode.node[0], nearestNode.node[1], nearestNode.id};
     }
 }
