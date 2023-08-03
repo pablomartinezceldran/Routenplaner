@@ -1,10 +1,8 @@
 package main.java;
 
-import main.java.models.k2Tree.K2Tree;
 import main.java.models.map.MapGraph;
 import main.java.services.Dijkstra;
 
-import java.util.Arrays;
 
 public class Testing {
     public static void main(String[] args) {
@@ -16,6 +14,7 @@ public class Testing {
 
         double[][] result = Dijkstra.oneToOneNew(map, 15105083, 12241570);
 
+        assert result != null;
         for (double[] doubles : result) { // Recorre las filas
             for (double elemento : doubles) { // Recorre las columnas
                 System.out.print(elemento + " ");
@@ -32,6 +31,7 @@ public class Testing {
 
         result = Dijkstra.oneToOneNew(map, 15105083, 12241570);
 
+        assert result != null;
         for (double[] doubles : result) { // Recorre las filas
             for (double elemento : doubles) { // Recorre las columnas
                 System.out.print(elemento + " ");
