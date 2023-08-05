@@ -52,14 +52,14 @@ public class Server {
             double longitude = Double.parseDouble(query.get("lon"));
 
             double[] data = k2Tree.findNearestNode(latitude, longitude);
-            String response = "{\"latitude\": " + data[0] + ", \"longitude\": " + data[1] + ", \"id\": " + data[2] + "}";
+            StringBuilder response = new StringBuilder().append("{\"latitude\": ").append(data[0]).append(", \"longitude\": ").append(data[1]).append(", \"id\": ").append(data[2]).append("}");
 
             httpExchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
             httpExchange.getResponseHeaders().set("Content-Type", "application/json");
-            httpExchange.sendResponseHeaders(200, response.getBytes().length);
+            httpExchange.sendResponseHeaders(200, response.toString().getBytes().length);
 
             OutputStream os = httpExchange.getResponseBody();
-            os.write(response.getBytes());
+            os.write(response.toString().getBytes());
             os.close();
         }
     }
