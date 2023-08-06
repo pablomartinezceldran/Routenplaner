@@ -1,4 +1,6 @@
-# This script compiles and runs the server and opens the index.html in firefox or chrome.
+#!/bin/bash
+# This script compiles and runs the server and opens the index.html in default browser.
+
 echo "Compiling server..."
 javac -d out src/main/java/Server.java src/main/java/services/Dijkstra.java src/main/java/models/k2Tree/K2Tree.java src/main/java/models/k2Tree/K2Node.java src/main/java/models/map/MapGraph.java
 echo "Done!"
@@ -9,9 +11,6 @@ sleep 120
 echo "Done!"
 
 echo "Opening web client..."
-# open index.html &
-# echo "Done!"
-# Check the operating system and open the browser accordingly
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS
     open index.html
