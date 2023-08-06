@@ -39,3 +39,7 @@ Ein webbasierter Routenplaner
   ```open index.html```
   - Linux:
   ```xdg-open index.html```
+
+## Straßennetz-Datei-Link
+Lade die Datei herunter und speichere sie im Ordner resources:
+- https://fmi.uni-stuttgart.de/files/alg/data/graphs/germany.fmi.bz2
