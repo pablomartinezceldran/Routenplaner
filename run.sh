@@ -24,7 +24,7 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     else
         echo "No xdg-open available. Please open index.html manually."
     fi
-elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
+elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
     # Windows
     if command -v start >/dev/null; then
         start index.html
