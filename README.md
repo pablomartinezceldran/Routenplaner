@@ -30,7 +30,7 @@ Ein webbasierter Routenplaner
 
 ```java -Xmx8G -Dfile.encoding=UTF-8 -classpath out main.java.Server```
 
-- Warten Sie, bis der Server geöffnet ist (ungefähr 100 Sekunden).
+- Warten Sie, bis der Server geöffnet ist (*Wartezeit ca. 100 Sekunden*).
 
 - Öffnen Sie die Datei index.html im Browser:
   - Windows:
@@ -41,5 +41,5 @@ Ein webbasierter Routenplaner
   ```xdg-open index.html```
 
 ## Straßennetz-Datei-Link
-Lade die Datei herunter und speichere sie im Ordner resources:
+Lade die Datei herunter und speichere sie im Ordner **resources**:
 - https://fmi.uni-stuttgart.de/files/alg/data/graphs/germany.fmi.bz2
