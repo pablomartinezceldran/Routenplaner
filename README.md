@@ -1,45 +1,43 @@
-# Programmierprojekt - Routenplaner
+# Programming Project - Route Planner
 
-Ein webbasierter Routenplaner
+A web-based route planner
 
-## Mitglieder
+## Members
 
 - Pablo Martinez
-
 - Esther Uerek
-
 - Metin Arab
 
-## Wie wird das Projekt durchgeführt
+## How the Project is Carried Out
 
 ### Option 1:
-- Führe die Datei **run.sh** aus.  
-  - *Wartezeit ca. 120 Sekunden*
-- **Hinweis**: Wenn die Ausführung beendet ist, ist der Server noch geöffnet. Um ihn zu schließen, führen Sie die folgenden Befehle aus:
+- Execute the **run.sh** file.
+  - *Wait time approximately 120 seconds*
+- **Note**: When the execution is completed, the server is still open. To close it, execute the following commands (Linux and MacOS):
 
   - ```lsof -i:8080```
-  - Suche nach der Java-PID, zum Beispiel 33014.
+  - Look for the Java PID, for example, 33014.
   - ```kill 33014```
 
-  - So beendet man die Ausführung des Servers auf dem Computer.
+  - This is how you terminate the server execution on the computer.
 
 ### Option 2:
-- im aktuellen Ordner, führe die folgenden Befehle aus:
+- In the current folder, execute the following commands:
 
 ```javac -d out src/main/java/**/*.java```
 
 ```java -Xmx8G -Dfile.encoding=UTF-8 -classpath out main.java.Server```
 
-- Warten Sie, bis der Server geöffnet ist (*Wartezeit ca. 100 Sekunden*).
+- Wait until the server is open (*Wait time approximately 100 seconds*).
 
-- Öffnen Sie die Datei index.html im Browser:
+- Open the index.html file in the browser:
   - Windows:
-  ```start index.html```
+    ```start index.html```
   - MacOS:
-  ```open index.html```
+    ```open index.html```
   - Linux:
-  ```xdg-open index.html```
+    ```xdg-open index.html```
 
-## Straßennetz-Datei-Link
-Lade die Datei herunter und speichere sie im Ordner **resources**:
+## Road Network File Link
+Download the file (700 MB zipped) and save it in the **resources** folder:
 - https://fmi.uni-stuttgart.de/files/alg/data/graphs/germany.fmi.bz2
